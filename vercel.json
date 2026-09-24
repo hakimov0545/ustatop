@@ -5,6 +5,16 @@
     "api/[...path].js": {
       "memory": 1024,
       "maxDuration": 30
+    },
+    "api/dispatch.js": {
+      "memory": 1024,
+      "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:resource/:path*",
+      "destination": "/api/dispatch?__route=:resource/:path*"
+    }
+  ]
 }
