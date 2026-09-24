@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import * as controller from './orders.controller.js';
+import { authenticated } from '../../shared/middleware.js';
+export const ordersRouter=Router();
+ordersRouter.use(authenticated);
+ordersRouter.get('/',controller.list);
+ordersRouter.get('/incoming',controller.incoming);
+ordersRouter.post('/',controller.create);
+ordersRouter.get('/:id',controller.detail);
+ordersRouter.patch('/:id/status',controller.updateStatus);

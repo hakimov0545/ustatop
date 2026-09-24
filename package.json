@@ -1,0 +1,31 @@
+{
+  "name": "ustatop-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --env-file-if-exists=.env --watch server/index.js",
+    "dev:client": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "seed": "node --env-file-if-exists=.env server/seed.js",
+    "migrate:sqlite": "node --env-file-if-exists=.env server/scripts/migrate-sqlite-to-mongo.js",
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "deploy": "npx vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.0",
+    "express": "^5.1.0",
+    "mongodb": "^7.6.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^9.2.0",
+    "vite": "^6.3.5"
+  }
+}

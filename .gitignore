@@ -1,0 +1,12 @@
+ustatop.sqlite3
+ustatop.sqlite3-shm
+ustatop.sqlite3-wal
+uploads/
+__pycache__/
+.DS_Store
+node_modules/
+dist/
+.vercel/
+.env
+.env.*
+!.env.example
