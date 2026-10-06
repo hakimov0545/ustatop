@@ -4,6 +4,7 @@ import { requireUser } from '../../shared/auth.js';
 import { coordinates, district, id } from '../../shared/validation.js';
 import { httpError } from '../../shared/errors.js';
 import { distanceKm, etaMinutes } from '../../shared/geo.js';
+import { notifyNewOrder } from './orders.notification.js';
 
 const transitions = { pending: ['accepted', 'cancelled'], accepted: ['en_route', 'cancelled'], en_route: ['arrived'], arrived: ['in_progress'], in_progress: ['completed'], completed: [], cancelled: [] };
 const labels = { pending: 'Buyurtma qabul qilindi', accepted: 'Usta buyurtmani qabul qildi', en_route: 'Usta yo‘lda', arrived: 'Usta yetib keldi', in_progress: 'Ish boshlandi', completed: 'Ish yakunlandi', cancelled: 'Buyurtma bekor qilindi' };
@@ -33,6 +34,7 @@ export async function create(user, data) {
   if (masterId && !(await (await getCollection('users')).findOne({ id: masterId, role: 'master', available: true, category_id: categoryId, district: area }))) httpError(400, 'Tanlangan usta bu xizmat yoki hudud uchun mavjud emas.');
   const point = coordinates(data.latitude, data.longitude);
   const order = await repository.create({ categoryId, description, address, district: area, masterId, preferredTime: String(data.preferred_time || '').slice(0, 80), scheduledAt: scheduledAt.toISOString(), latitude: point.latitude, longitude: point.longitude }, user);
+  await notifyNewOrder(order, user);
   return order;
 }
 export async function changeStatus(user, rawId, nextStatus) {

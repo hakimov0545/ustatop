@@ -27,6 +27,30 @@ export function OrderDialog({
   const [point, setPoint] = useState(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [telegramLinked, setTelegramLinked] = useState(false);
+  const [telegramBot, setTelegramBot] = useState("");
+  const [telegramError, setTelegramError] = useState("");
+  useEffect(() => {
+    let active = true;
+    async function refreshTelegram() {
+      try {
+        const status = await request("/api/telegram/status");
+        if (active) { setTelegramLinked(status.linked); setTelegramBot(status.bot_username); }
+      } catch {}
+    }
+    refreshTelegram();
+    const timer = window.setInterval(refreshTelegram, 2500);
+    return () => { active = false; window.clearInterval(timer); };
+  }, []);
+  async function linkTelegram() {
+    setTelegramError("");
+    const telegramTab = window.open("about:blank", "_blank");
+    try {
+      const link = await request("/api/telegram/link", { method: "POST", body: "{}" });
+      if (telegramTab) telegramTab.location.href = link.url;
+      else window.location.href = link.url;
+    } catch (problem) { telegramTab?.close(); setTelegramError(problem.message); }
+  }
   useEffect(() => {
     if (description.trim().length < 5) return;
     const timer = setTimeout(async () => {
@@ -115,6 +139,12 @@ export function OrderDialog({
         </div>
       )}
       <form onSubmit={submit}>
+        <div className="panel telegram-link-panel">
+          <b>{telegramLinked ? "✓ Telegram ulangan" : "Telegram orqali xabar olish"}</b>
+          <p>{telegramLinked ? "Buyurtma va holat yangiliklari Telegramingizga yuboriladi." : "Buyurtma xabarini o‘z Telegramingizda olish uchun botni bir marta ishga tushiring."}</p>
+          {!telegramLinked && <button type="button" className="btn outline small" onClick={linkTelegram} disabled={!telegramBot}>✈ {telegramBot ? `@${telegramBot} botini ulash` : "Telegram bot sozlanmagan"}</button>}
+          {telegramError && <p className="form-error">{telegramError}</p>}
+        </div>
         <Field label="Muammo">
           <textarea
             value={description}
