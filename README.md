@@ -52,8 +52,9 @@ All accounts use password `UstaTop123!`.
 6. Book a master by date and time.
 7. Follow order status and its history.
 8. Chat with the other order participant and share image/video attachments.
-9. Rate and review completed work.
-10. Contact masters by the phone and social links they choose to publish.
+9. Receive Telegram messages when an order is created or its status changes; customers can manage Telegram notification preferences in their account.
+10. Rate and review completed work.
+11. Contact masters by the phone and social links they choose to publish.
 
 ## Media and privacy
 

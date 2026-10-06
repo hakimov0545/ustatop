@@ -7,7 +7,20 @@ const digest = value => crypto.createHash('sha256').update(value).digest('hex');
 
 export async function status(user) {
   requireUser({ user }, 'customer');
-  return { linked: Boolean(user.telegram_chat_id), bot_username: process.env.TELEGRAM_BOT_USERNAME || '' };
+  return {
+    linked: Boolean(user.telegram_chat_id),
+    bot_username: process.env.TELEGRAM_BOT_USERNAME || '',
+    notifications_enabled: user.telegram_notifications_enabled !== false,
+  };
+}
+
+export async function updatePreferences(user, data) {
+  requireUser({ user }, 'customer');
+  const enabled = Boolean(data.enabled);
+  await (await getCollection('users')).updateOne({ id: user.id, role: 'customer' }, {
+    $set: { telegram_notifications_enabled: enabled },
+  });
+  return { notifications_enabled: enabled };
 }
 
 export async function createLink(user) {
@@ -29,7 +42,7 @@ export async function handleUpdate(update) {
   const link = await links.findOneAndDelete({ token_hash: digest(match[1]), expires_at: { $gt: new Date() } });
   if (!link) return;
   await (await getCollection('users')).updateOne({ id: link.user_id, role: 'customer' }, {
-    $set: { telegram_chat_id: String(message.chat.id), telegram_linked_at: new Date() },
+    $set: { telegram_chat_id: String(message.chat.id), telegram_linked_at: new Date(), telegram_notifications_enabled: true },
   });
   await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST', headers: { 'content-type': 'application/json' },

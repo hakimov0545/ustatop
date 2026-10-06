@@ -4,7 +4,7 @@ import { requireUser } from '../../shared/auth.js';
 import { coordinates, district, id } from '../../shared/validation.js';
 import { httpError } from '../../shared/errors.js';
 import { distanceKm, etaMinutes } from '../../shared/geo.js';
-import { notifyNewOrder } from './orders.notification.js';
+import { notifyNewOrder, notifyOrderStatus } from './orders.notification.js';
 
 const transitions = { pending: ['accepted', 'cancelled'], accepted: ['en_route', 'cancelled'], en_route: ['arrived'], arrived: ['in_progress'], in_progress: ['completed'], completed: [], cancelled: [] };
 const labels = { pending: 'Buyurtma qabul qilindi', accepted: 'Usta buyurtmani qabul qildi', en_route: 'Usta yo‘lda', arrived: 'Usta yetib keldi', in_progress: 'Ish boshlandi', completed: 'Ish yakunlandi', cancelled: 'Buyurtma bekor qilindi' };
@@ -52,5 +52,6 @@ export async function changeStatus(user, rawId, nextStatus) {
   } else { requireUser({ user }, 'master'); if (order.master_id !== user.id) httpError(403, 'Faqat buyurtmaga biriktirilgan usta holatni o‘zgartiradi.'); }
   const saved = await repository.updateStatus(orderId, status, user.id, assignedMaster, labels[status], order.status);
   if (!saved) httpError(409, 'Buyurtma holati boshqa foydalanuvchi tomonidan yangilandi. Sahifani yangilang.');
+  if (user.role === 'master') await notifyOrderStatus(saved, status);
   return saved;
 }

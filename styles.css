@@ -1340,3 +1340,47 @@ footer {
 .contact-panel {
   margin-top: 14px;
 }
+.telegram-settings {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 12px 0 24px;
+  padding: 18px 20px;
+}
+.telegram-settings h2 {
+  margin: 5px 0;
+  font-size: 16px;
+}
+.telegram-settings p {
+  margin: 0;
+  color: #778278;
+  font-size: 12px;
+}
+.telegram-settings-actions {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  flex-shrink: 0;
+}
+.telegram-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #34473a;
+  font-size: 12px;
+  cursor: pointer;
+}
+.telegram-toggle input {
+  accent-color: #47744e;
+}
+.telegram-settings-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .telegram-settings {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

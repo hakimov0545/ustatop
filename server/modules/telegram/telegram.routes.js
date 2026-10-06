@@ -11,3 +11,4 @@ telegramRouter.post('/webhook', async (req, res, next) => {
 });
 telegramRouter.get('/status', authenticated, async (req, res) => res.json(await service.status(req.user)));
 telegramRouter.post('/link', authenticated, async (req, res) => res.json(await service.createLink(req.user)));
+telegramRouter.patch('/preferences', authenticated, async (req, res) => res.json(await service.updatePreferences(req.user, req.body)));
