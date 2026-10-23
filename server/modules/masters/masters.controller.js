@@ -3,9 +3,20 @@ import * as service from './masters.service.js';
 import { requireUser } from '../../shared/auth.js';
 import { validateBlobFile } from '../../shared/blob.js';
 import { httpError } from '../../shared/errors.js';
+import * as adminRepository from '../admin/admin.repository.js';
 
-export const list = async (req, res) => res.json(await service.list(req.query));
-export const profile = async (req, res) => res.json(await service.getProfile(req.params.id));
+export const list = async (req, res) => {
+  const result = await service.list(req.query);
+  const categoryId = /^\d+$/.test(String(req.query.category || '')) ? Number(req.query.category) : null;
+  const district = String(req.query.district || '').trim().slice(0, 100) || null;
+  try { await adminRepository.recordSearch({ categoryId, district }); } catch { /* analytics must not block the service if storage is unavailable */ }
+  res.json(result);
+};
+export const profile = async (req, res) => {
+  const result = await service.getProfile(req.params.id);
+  try { await adminRepository.recordMasterView(req.params.id); } catch { /* analytics must not block the profile if storage is unavailable */ }
+  res.json(result);
+};
 export const update = async (req, res) => res.json({ user: await service.update(req.user, req.body) });
 export const portfolioUpload = async (req, res) => {
   requireUser(req, 'master');

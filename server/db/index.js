@@ -52,6 +52,8 @@ async function initialize(database) {
     database.collection('media').createIndex({ id: 1 }, { unique: true }),
     database.collection('media').createIndex({ portfolio_master_id: 1, created_at: -1 }),
     database.collection('media').createIndex({ order_id: 1, message_id: 1 }),
+    database.collection('search_analytics').createIndex({ day: 1, category_id: 1, district: 1 }, { unique: true }),
+    database.collection('master_view_analytics').createIndex({ day: 1, master_id: 1 }, { unique: true }),
   ]);
   const categories = [
     [1, 'Santexnik', '🚰'], [2, 'Elektrik', '⚡'], [3, 'Maishiy texnika', '🧺'],

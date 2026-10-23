@@ -11,6 +11,8 @@ export function Header({ user, loading, onLogout, onAuth }) {
           <NavLink to="/" end>Ustalar</NavLink>
           <NavLink to="/map">Xarita</NavLink>
           <NavLink to="/orders">Buyurtmalar</NavLink>
+        </> : user?.role === 'admin' ? <>
+          <NavLink to="/admin">Dashboard</NavLink>
         </> : user?.role === 'master' ? <>
           <NavLink to="/orders">Ishlar</NavLink>
           <NavLink to="/settings">Profil/portfolio</NavLink>

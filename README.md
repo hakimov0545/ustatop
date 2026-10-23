@@ -15,6 +15,9 @@ BLOB_READ_WRITE_TOKEN=<vercel-blob-token>
 TELEGRAM_BOT_TOKEN=<telegram-bot-token>
 TELEGRAM_BOT_USERNAME=<bot-username-without-at-sign>
 TELEGRAM_WEBHOOK_SECRET=<random-webhook-secret>
+ADMIN_NAME=<admin-name>
+ADMIN_PHONE=<admin-phone>
+ADMIN_PASSWORD=<at-least-12-characters>
 ```
 
 Customers link their own Telegram account from the order form. The site opens the bot with a short lived one-time link; after the customer presses **Start**, Telegram sends their chat ID to the app and new orders are sent to that customer. Telegram bots cannot message a person until that person starts the bot. Create the bot with `@BotFather`, set these variables, and register `https://<your-domain>/api/telegram/webhook` as its webhook using the same `TELEGRAM_WEBHOOK_SECRET`. Without the bot configuration or customer link, orders are still saved, but Telegram notifications cannot be delivered. A Telegram delivery error does not discard a saved order.
@@ -24,11 +27,14 @@ Then run:
 ```sh
 npm install
 npm run init:db
+npm run admin:create
 npm run seed
 npm run dev
 ```
 
 Open the Vite URL (normally `http://127.0.0.1:5173`). Vite proxies `/api` to Express on port 4000. Initialize MongoDB indexes and service categories once with `npm run init:db` before starting the API; regular API requests do not run database setup.
+
+Set `ADMIN_NAME`, `ADMIN_PHONE`, and a unique `ADMIN_PASSWORD` of at least 12 characters in `.env`, then run `npm run admin:create` once. The command provisions the super-admin account; admins sign in at `/login` and are redirected to the `/admin` dashboard. Admin role cannot be selected during public registration. Search and master-profile view analytics begin collecting after deployment of this version; district user counts use the district saved in user profiles.
 
 ## Demo accounts
 

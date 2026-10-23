@@ -12,6 +12,7 @@ import { AuthPage } from '../features/auth/ui/AuthPage.jsx';
 import { OrderDialog } from '../features/order-create/ui/OrderDialog.jsx';
 import { ChatDialog } from '../features/order-chat/ui/ChatDialog.jsx';
 import { ReviewDialog } from '../features/review/ui/ReviewDialog.jsx';
+import { AdminDashboardPage } from '../pages/admin/ui/AdminDashboardPage.jsx';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -53,7 +54,7 @@ export default function App() {
   function authenticated(nextUser) {
     setUser(nextUser);
     const requested = location.state?.from;
-    navigate(nextUser.role === 'master' ? '/orders' : (requested || '/'), { replace: true });
+    navigate(nextUser.role === 'admin' ? '/admin' : nextUser.role === 'master' ? '/orders' : (requested || '/'), { replace: true });
     notify('Akkauntga muvaffaqiyatli kirdingiz.');
   }
 
@@ -93,6 +94,7 @@ export default function App() {
     { path: '/', element: <HomePage user={user} categories={categories} onOrder={openOrder} onIssue={setIssueDraft} onOpenMaster={openProfile} onOpenMap={() => navigate('/map')} onAuth={() => navigate('/register')} /> },
     { path: '/map', element: <MapPage onBack={backOrHome} onOpenMaster={openProfile} /> },
     { path: '/orders', element: <ProtectedPage ready={ready} user={user} from={location.pathname}><OrdersPage key={user?.id} revision={revision} user={user} categories={categories} onOrder={openOrder} onChat={(order) => setModal({ type: 'chat', order })} onReview={(order) => setModal({ type: 'review', order })} notify={notify} /></ProtectedPage> },
+    { path: '/admin', element: <ProtectedPage ready={ready} user={user} role="admin" from={location.pathname}><AdminDashboardPage /></ProtectedPage> },
     { path: '/settings', element: <ProtectedPage ready={ready} user={user} role="master" from={location.pathname}><MasterSettingsPage user={user} categories={categories} onUser={setUser} notify={notify} /></ProtectedPage> },
     { path: '/login', element: <AuthPage key={location.pathname} initialMode="login" categories={categories} onModeChange={(mode) => navigate(mode === 'register' ? '/register' : '/login')} onAuth={authenticated} /> },
     { path: '/register', element: <AuthPage key={location.pathname} initialMode="register" categories={categories} onModeChange={(mode) => navigate(mode === 'register' ? '/register' : '/login')} onAuth={authenticated} /> },
@@ -113,7 +115,7 @@ export default function App() {
 function ProtectedPage({ ready, user, role, from, children }) {
   if (!ready) return <div className="empty">Yuklanmoqda…</div>;
   if (!user) return <Navigate to="/login" replace state={{ from }} />;
-  if (role && user.role !== role) return <Navigate to="/" replace />;
+  if (role && user.role !== role) return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />;
   return children;
 }
 

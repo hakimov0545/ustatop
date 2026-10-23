@@ -12,6 +12,7 @@ import { errorHandler } from './shared/errors.js';
 import { uploadsRouter } from './modules/uploads/uploads.routes.js';
 import { getDb } from './db/index.js';
 import { telegramRouter } from './modules/telegram/telegram.routes.js';
+import { adminRouter } from './modules/admin/admin.routes.js';
 
 const app=express();
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -20,6 +21,7 @@ app.use(express.json({limit:'100kb'}));
 app.use(attachUser);
 app.get('/api/health',async(_req,res)=>{await (await getDb()).command({ping:1});res.json({ok:true,service:'ustatop-express'});});
 app.use('/api/auth',authRouter);
+app.use('/api/admin',adminRouter);
 app.use('/api/telegram',telegramRouter);
 app.use('/api/categories',categoriesRouter);
 app.use('/api/masters',mastersRouter);

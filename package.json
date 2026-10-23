@@ -13,6 +13,7 @@
     "build": "vite build",
     "seed": "node --env-file-if-exists=.env server/seed.js",
     "init:db": "node --env-file-if-exists=.env server/scripts/init-db.js",
+    "admin:create": "node --env-file-if-exists=.env server/scripts/create-admin.js",
     "refresh:pitch": "node --env-file-if-exists=.env server/scripts/refresh-pitch-data.js",
     "migrate:sqlite": "node --env-file-if-exists=.env server/scripts/migrate-sqlite-to-mongo.js",
     "start": "node --env-file-if-exists=.env server/index.js",
