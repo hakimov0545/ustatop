@@ -7,14 +7,16 @@ export async function list({ categoryId, district }) {
   if (district) filter.district = district;
   const [masters, categoryList] = await Promise.all([users.find(filter).toArray(), categories.find().toArray()]);
   const categoryMap = new Map(categoryList.map(category => [category.id, category]));
-  return Promise.all(masters.map(async master => {
-    const [summary, latest] = await Promise.all([
-      reviews.aggregate([{ $match: { master_id: master.id } }, { $group: { _id: null, rating: { $avg: '$rating' }, review_count: { $sum: 1 } } }]).next(),
-      reviews.find({ master_id: master.id }).sort({ created_at: -1 }).limit(1).toArray(),
-    ]);
+  const reviewSummaries = masters.length ? await reviews.aggregate([
+    { $match: { master_id: { $in: masters.map(master => master.id) } } },
+    { $group: { _id: '$master_id', rating: { $avg: '$rating' }, review_count: { $sum: 1 } } },
+  ]).toArray() : [];
+  const summaryMap = new Map(reviewSummaries.map(summary => [summary._id, summary]));
+  return masters.map(master => {
+    const summary = summaryMap.get(master.id);
     const category = categoryMap.get(master.category_id);
-    return { ...master, category: category?.name || '', icon: category?.icon || '', rating: summary?.rating || 0, review_count: summary?.review_count || 0, latest_review: latest[0] || null };
-  }));
+    return { ...master, category: category?.name || '', icon: category?.icon || '', rating: summary?.rating || 0, review_count: summary?.review_count || 0 };
+  });
 }
 
 export async function profile(masterId) {

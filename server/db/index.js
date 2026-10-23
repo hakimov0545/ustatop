@@ -20,7 +20,12 @@ function getClient() {
 
 export async function getDb() {
   const client = await getClient();
-  const database = client.db(databaseName);
+  return client.db(databaseName);
+}
+
+// Run during database setup, rather than on every cold API startup.
+export async function initializeDatabase() {
+  const database = await getDb();
   if (!initializationPromise) initializationPromise = initialize(database).catch(error => {
     initializationPromise = undefined;
     throw error;

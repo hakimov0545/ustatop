@@ -15,6 +15,10 @@
     {
       "source": "/api/:resource/:path*",
       "destination": "/api/dispatch?__route=:resource/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

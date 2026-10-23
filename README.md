@@ -23,11 +23,12 @@ Then run:
 
 ```sh
 npm install
+npm run init:db
 npm run seed
 npm run dev
 ```
 
-Open the Vite URL (normally `http://127.0.0.1:5173`). Vite proxies `/api` to Express on port 4000. MongoDB indexes and service categories are initialized on first API access.
+Open the Vite URL (normally `http://127.0.0.1:5173`). Vite proxies `/api` to Express on port 4000. Initialize MongoDB indexes and service categories once with `npm run init:db` before starting the API; regular API requests do not run database setup.
 
 ## Demo accounts
 
@@ -80,7 +81,7 @@ npm run deploy
 
 Follow the prompts. In the Vercel project settings, add the environment variables above for Production (and Preview if needed), create a Blob store, then run `npm run deploy` again. Register the webhook with Telegram's `setWebhook` API, passing `url=https://<your-domain>/api/telegram/webhook` and `secret_token=<TELEGRAM_WEBHOOK_SECRET>`. In MongoDB Atlas, allow network access for the deployment; for a no-cost prototype this may require `0.0.0.0/0`, which makes the database reachable from any IP, so use a dedicated database user with a strong password and only the required database permissions. Never commit `.env` or production secrets. Do not run the demo seed against production.
 
-To add demo data to the Atlas database, set the same `MONGODB_URI` and `MONGODB_DB` in your local `.env`, then run `npm run seed` before deploying. If you have an existing local `ustatop.sqlite3` database and its `uploads/` folder, set `SQLITE_FILE` if needed and run `npm run migrate:sqlite`; set `BLOB_READ_WRITE_TOKEN` too if it has media files. The migration script can be safely rerun and uploads media to Blob.
+To populate a pitch-preview database, set `MONGODB_URI` and `MONGODB_DB` in `.env`, run `npm run seed`, then run `npm run refresh:pitch`. The pitch refresh creates fictional profile text, review examples, and illustrated portfolio entries for presentation use. Replace these with verified details and work images before accepting real customers. The script updates the seeded accounts in place so existing order links remain valid. If you have an existing local `ustatop.sqlite3` database and its `uploads/` folder, set `SQLITE_FILE` if needed and run `npm run migrate:sqlite`; set `BLOB_READ_WRITE_TOKEN` too if it has media files. The migration script can be safely rerun and uploads media to Blob.
 
 ## Prototype limits
 

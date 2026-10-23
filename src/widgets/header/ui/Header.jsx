@@ -1,68 +1,32 @@
-export function Header({ user, page, setPage, onLogout, onAuth }) {
+import { Link, NavLink } from 'react-router-dom';
+
+export function Header({ user, loading, onLogout, onAuth }) {
   return (
     <header className="topbar">
-      <button className="brand" onClick={() => setPage("home")}>
-        <span className="brandmark">U</span>usta
-        <span className="brand-accent">top</span>
-      </button>
+      <Link className="brand" to="/">
+        <span className="brandmark">U</span>usta<span className="brand-accent">top</span>
+      </Link>
       <nav className="nav">
-        {user?.role === "customer" ? (
-          <>
-            <button
-              className={page === "home" ? "active" : ""}
-              onClick={() => setPage("home")}
-            >
-              Ustalar
-            </button>
-            <button
-              className={page === "orders" ? "active" : ""}
-              onClick={() => setPage("orders")}
-            >
-              Buyurtmalar
-            </button>
-          </>
-        ) : user?.role === "master" ? (
-          <>
-            <button
-              className={page === "orders" ? "active" : ""}
-              onClick={() => setPage("orders")}
-            >
-              Ishlar
-            </button>
-            <button
-              className={page === "settings" ? "active" : ""}
-              onClick={() => setPage("settings")}
-            >
-              Profil/portfolio
-            </button>
-          </>
-        ) : (
-          <button
-            className={page === "home" ? "active" : ""}
-            onClick={() => setPage("home")}
-          >
-            Ustalarni topish
-          </button>
-        )}
+        {user?.role === 'customer' ? <>
+          <NavLink to="/" end>Ustalar</NavLink>
+          <NavLink to="/map">Xarita</NavLink>
+          <NavLink to="/orders">Buyurtmalar</NavLink>
+        </> : user?.role === 'master' ? <>
+          <NavLink to="/orders">Ishlar</NavLink>
+          <NavLink to="/settings">Profil/portfolio</NavLink>
+        </> : <>
+          <NavLink to="/" end>Ustalarni topish</NavLink>
+          <NavLink to="/map">Xarita</NavLink>
+        </>}
       </nav>
       <div className="account-actions">
-        {user ? (
-          <>
-            <span className="account-name">{user.name}</span>
-            <button className="btn outline small" onClick={onLogout}>
-              Chiqish
-            </button>
-          </>
-        ) : (
-          <>
-            <button className="text-button" onClick={() => onAuth("login")}>
-              Kirish
-            </button>
-            <button className="btn small" onClick={() => onAuth("register")}>
-              Ro‘yxatdan o‘tish
-            </button>
-          </>
-        )}
+        {loading ? <span className="account-name" aria-label="Akkaunt tekshirilmoqda">…</span> : user ? <>
+          <span className="account-name">{user.name}</span>
+          <button className="btn outline small" onClick={onLogout}>Chiqish</button>
+        </> : <>
+          <button className="text-button" onClick={() => onAuth('login')}>Kirish</button>
+          <button className="btn small" onClick={() => onAuth('register')}>Ro‘yxatdan o‘tish</button>
+        </>}
       </div>
     </header>
   );

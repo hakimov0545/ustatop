@@ -14,7 +14,7 @@ export async function list(query){
   const masters=(await repository.list({categoryId,district:area})).map(master=>{
     let distance=null,eta=null;
     if(point.latitude!==null&&master.latitude!==null&&master.longitude!==null){distance=Number(distanceKm(point.latitude,point.longitude,master.latitude,master.longitude).toFixed(1));eta=etaMinutes(distance);}
-    const {latitude,longitude,password_hash,phone,contact_phone,social_links,_id,created_at,latest_review,...publicMaster}=master;
+    const {password_hash,phone,contact_phone,social_links,_id,created_at,latest_review,...publicMaster}=master;
     return {...publicMaster,services:parseServices(master.services),distance_km:distance,eta_minutes:eta};
   }).filter(master=>radius===null||(master.distance_km!==null&&master.distance_km<=radius))
    .sort((a,b)=>a.distance_km===null?1:b.distance_km===null?-1:a.distance_km-b.distance_km||b.rating-a.rating);

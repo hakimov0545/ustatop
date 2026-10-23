@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 import { put } from "@vercel/blob";
-import { closeDatabase, getCollection, getDb } from "../db/index.js";
+import { closeDatabase, getCollection, initializeDatabase } from "../db/index.js";
 
 const root = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -24,7 +24,7 @@ const parseJson = (value, fallback) => {
 const stableId = (kind, id) => `legacy-${kind}-${id}`;
 
 try {
-  await getDb();
+  await initializeDatabase();
   const usersCollection = await getCollection("users");
   const userIds = new Map();
   for (const row of sqlite.prepare("SELECT * FROM users ORDER BY id").all()) {
