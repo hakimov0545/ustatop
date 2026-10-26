@@ -92,7 +92,7 @@ export default function App() {
 
   const pages = useRoutes([
     { path: '/', element: <HomePage user={user} categories={categories} onOrder={openOrder} onIssue={setIssueDraft} onOpenMaster={openProfile} onOpenMap={() => navigate('/map')} onAuth={() => navigate('/register')} /> },
-    { path: '/map', element: <MapPage onBack={backOrHome} onOpenMaster={openProfile} /> },
+    { path: '/map', element: <MapPage issueDraft={issueDraft} onClearIssue={() => setIssueDraft({ description: '', categoryId: '' })} onBack={backOrHome} onOpenMaster={openProfile} /> },
     { path: '/orders', element: <ProtectedPage ready={ready} user={user} from={location.pathname}><OrdersPage key={user?.id} revision={revision} user={user} categories={categories} onOrder={openOrder} onChat={(order) => setModal({ type: 'chat', order })} onReview={(order) => setModal({ type: 'review', order })} notify={notify} /></ProtectedPage> },
     { path: '/admin', element: <ProtectedPage ready={ready} user={user} role="admin" from={location.pathname}><AdminDashboardPage /></ProtectedPage> },
     { path: '/settings', element: <ProtectedPage ready={ready} user={user} role="master" from={location.pathname}><MasterSettingsPage user={user} categories={categories} onUser={setUser} notify={notify} /></ProtectedPage> },
